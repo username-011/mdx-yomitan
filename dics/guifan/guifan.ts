@@ -57,7 +57,10 @@ export async function processGuifan(
           type: "structured-content",
           content: { tag: "span", content: `→${linkedTerm}`, lang: "zh-CN" },
         });
-      await pinyinDic.addTerm(termEntry.build());
+      await Promise.all([
+        pinyinDic.addTerm(termEntry.build()),
+        zhuyinDic.addTerm(termEntry.build()),
+      ]);
       continue;
     }
     const $ = cheerio.load(term.xmlString);
