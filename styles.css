@@ -87,7 +87,9 @@ font-family: "Noto Sans CJK SC";
 [data-sc-guifan="dt"][data-sc-class="x-sbl3"] {
   margin-left: 3.9em;
 }
-[data-sc-guifan="dd"][data-sc-class="x-ext"],
-[data-sc-guifan="dd"][data-sc-class="x-ext1"] {
+[data-sc-guifan="dd"][data-sc-class="x-ext"] {
   margin-left: 0.4em;
+}
+[data-sc-guifan="dd"][data-sc-class="x-ext1"] {
+  margin-left: -0.6em;
 }
