@@ -65,17 +65,17 @@ font-family: "Noto Sans CJK SC";
 
 [data-sc-guifan="dt"][data-sc-class="x-sbl2t"],
 [data-sc-guifan="dd"][data-sc-class="x-sbl2t"] {
-  margin-left: 4.3em;
+  margin-left: 4em;
 }
 [data-sc-guifan="dt"][data-sc-class="x-sbl3t"],
 [data-sc-guifan="dd"][data-sc-class="x-sbl3t"] {
-  margin-left: 5.6em;
+  margin-left: 5.2em;
 }
 [data-sc-guifan="dd"][data-sc-class="x-sblt"],
 [data-sc-guifan="dd"][data-sc-class="x-sbl0t"],
 [data-sc-guifan="dt"][data-sc-class="x-sblt"],
 [data-sc-guifan="dt"][data-sc-class="x-sbl0t"] {
-  margin-left: 1.8em;
+  margin-left: 2.75em;
 }
 [data-sc-guifan="dt"][data-sc-class="x-sbl"],
 [data-sc-guifan="dt"][data-sc-class="x-sbl0"] {
@@ -89,5 +89,5 @@ font-family: "Noto Sans CJK SC";
 }
 [data-sc-guifan="dd"][data-sc-class="x-ext"],
 [data-sc-guifan="dd"][data-sc-class="x-ext1"] {
-  margin-left: 1.6em;
+  margin-left: 0.4em;
 }

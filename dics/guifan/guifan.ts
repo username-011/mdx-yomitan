@@ -42,6 +42,7 @@ function traverse($: cheerio.CheerioAPI, node: AnyNode): StructuredContentNode {
 }
 
 // todo: add separate terms for non erhua variants where possible
+// todo: actually add the base64 images where they rarely exist
 export async function processGuifan(
   terms: ParsedTerm[],
   [pinyinDic, zhuyinDic]: [Dictionary, Dictionary]
