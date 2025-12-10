@@ -21,6 +21,8 @@ function traverse($: cheerio.CheerioAPI, node: AnyNode): StructuredContentNode {
         case "x-pr":
         case "script":
           return "";
+        case "br":
+          return "\n";
         default:
           return {
             tag: "span",
