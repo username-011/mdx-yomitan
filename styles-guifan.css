@@ -1,4 +1,6 @@
-font-family: "Noto Sans CJK SC", sans-serif;
+& {
+  font-family: "Noto Sans CJK SC", sans-serif;
+}
 
 [data-sc-guifan="simp"] {
   display: inline-block;
