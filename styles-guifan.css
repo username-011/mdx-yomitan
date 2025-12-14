@@ -75,11 +75,11 @@
   }
 }
 [data-sc-guifan="sup"] {
-  vertical-align: super;
+  vertical-align: top;
   font-size: x-small;
 }
 [data-sc-guifan="sub"] {
-  vertical-align: text-bottom;
+  vertical-align: bottom;
   font-size: x-small;
 }
 [data-sc-guifan="x-er"] {

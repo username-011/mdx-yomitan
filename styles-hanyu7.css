@@ -44,11 +44,11 @@
   color: #588484;
 }
 [data-sc-hanyu7="sup"] {
-  vertical-align: super;
+  vertical-align: top;
   font-size: x-small;
 }
 [data-sc-hanyu7="sub"] {
-  vertical-align: text-bottom;
+  vertical-align: bottom;
   font-size: x-small;
 }
 [data-sc-hanyu7="small"] {
