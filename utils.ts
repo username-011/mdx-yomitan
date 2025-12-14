@@ -26,3 +26,12 @@ export function splitByElement(
   if (currentSection.length > 0) sections.push(currentSection);
   return sections;
 }
+
+export function filterUntil<T>(arr: T[], condition: (el: T) => boolean): T[] {
+  const newArr = [] as T[];
+  for (const el of arr) {
+    if (condition(el)) return newArr;
+    newArr.push(el);
+  }
+  return newArr;
+}

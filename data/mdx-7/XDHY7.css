@@ -1,0 +1,212 @@
+@font-face {
+	font-family: 'Heiti';
+	src: url('hei_xdhy.ttf'), url('hei_xdhy.woff');
+}
+
+@font-face {
+	font-family: 'Songti';
+	src: url('song.ttf'), url('song.woff');
+}
+
+@font-face {
+	font-family: 'Fangsong';
+	src: url('simfang.ttf');
+}
+
+/*@font-face {
+	font-family: 'Source Han Serif';
+	src: url('SourceHanSerifCN-Regular.ttf');
+}*/
+
+body {
+	line-height: 1.5em;
+	font-family: "Times New Roman", /*'Source Han Serif',*/ Songti, "STShusong_CP", serif;
+}
+
+entry {
+	display: block;
+	margin: 0;
+}
+
+entry + entry {
+	margin-top: 1.5em;
+}
+
+hw {
+	display: block;
+	font-size: 1.3em;
+	font-family: Heiti, "hei_xdhy", "Microsoft Yahei", sans-serif;
+	margin-right: 0.3em;
+}
+
+hw sup {
+	font-size: 0.65em;
+}
+
+pinyin {
+	font-family: Heiti, "hei_xdhy", Helvetica, Arial, sans-serif;
+}
+
+hwg pinyin {
+	display: block;
+	color: #444;
+	margin-top: 0.2em;
+}
+
+def {
+	display: block;
+	margin-top: 0.3em;
+	/*margin-left: 1em;*/
+}
+
+num {
+	font-family: Heiti, "hei_xdhy";
+	color: #555;
+}
+
+n {
+	font-family: Arial, sans-serif;
+	color: #fff;
+	background: #000;
+	padding: 0 0.2em;
+	border-radius: 2px;
+}
+
+a {
+	color: #03f;
+	font-style: normal;
+	text-decoration: none;
+	border-bottom: #03f 1px solid;
+	/*vertical-align: text-bottom;*/
+}
+
+ps {
+	font-family: Heiti, "hei_xdhy", sans-serif;
+	font-size: 0.8em;
+	border: 1px solid;
+	border-radius: 0.2em;
+	margin-right: 3px;
+	padding: 1px;
+	vertical-align: 0.1em;
+}
+
+img.pic {
+	display: block;
+	margin-left: 1em;
+	max-width: 75%;
+	max-height: 16em;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+td {
+	border: 1px #A8A9AA solid;
+}
+
+p {
+	text-indent: 2em;
+	margin: 0px;
+}
+
+p[indent="1"] {
+	margin-left: 1.5em;
+	text-indent: -1.5em;
+}
+
+h1 {
+	font-size: 1.2em;
+	margin: 0.5em 0;
+}
+
+h2 {
+	font-family: Heiti, "hei_xdhy", sans-serif;
+	font-size: 1em;
+	margin: 0.5em 0;
+}
+
+column {
+	display: block;
+	/*border: red 1px solid;
+	border-radius: 0.25em;*/
+	border: #888 1px solid;
+	padding: 0.5em;
+	margin: 0.5em 0.1em 0.5em 0.1em;
+}
+
+math2 {
+	font-family: Songti, "STShusong_CP";
+	font-size: 2em;
+	vertical-align: -0.25em;
+}
+
+math3 {
+	font-family: Songti, "STShusong_CP";
+	font-size: 3em;
+	vertical-align: -0.3em;
+}
+
+note {
+	font-family: Heiti, "hei_xdhy", sans-serif;
+	font-size: 0.9em;
+	color: #fff;
+	background: red;
+	border-radius: 0.2em;
+	padding: 0.1em 0.2em;
+	margin: 0.15em 0;
+}
+
+column note {
+	/*display: block;
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0em;*/
+	/*margin: -0.6em -0.55em 0.5em -0.55em;*/
+	/*padding: 0 0.3em;*/
+	margin-right: 0.2em;
+}
+
+handwriting {
+	font-family: "Kaiti";
+}
+
+ci {
+	display: block;
+	margin: 0.5em 0.1em 1em 0.1em;
+	padding: 0;
+	border: #666 1px solid;
+	border-radius: 0.2em;
+}
+
+ci .title {
+	font-family: Heiti, "hei_xdhy", sans-serif;
+	background: #666;
+	color: white;
+	margin: -0.05em;
+	padding: 0.1em 0.35em 0 0.35em;
+	border-top-left-radius:0.2em;
+	border-top-right-radius:0.2em;
+}
+
+ci .cont {
+	padding: 0.5em;
+}
+
+ci a {
+	margin-right: 1em;
+}
+
+@media (prefers-color-scheme: dark) {
+	a {
+		color: #3Cf;
+		border-color: #3Cf;
+	}
+	
+	hwg pinyin {
+		color: #AAA;
+	}
+	
+	num {
+		color: #CCC;
+	}
+}

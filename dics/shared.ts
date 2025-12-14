@@ -1,5 +1,6 @@
-import { readFileSync } from "fs";
+import { readdirSync, readFileSync } from "fs";
 import { splitOnFirst } from "../utils.ts";
+import type { Dictionary } from "yomichan-dict-builder";
 
 export type ParsedTerm = {
   headword: string;
@@ -28,5 +29,17 @@ export function readTermsFromFile(termsTextFile: string): ParsedTerm[] {
       headword,
       xmlString,
     };
+  });
+}
+
+export async function addFiles(
+  [pinyinDic, zhuyinDic]: [Dictionary, Dictionary],
+  picsFolder: string
+) {
+  readdirSync(picsFolder).forEach((file) => {
+    if (!file.toLowerCase().endsWith(".png")) return;
+    const filePath = `${picsFolder}/${file}`;
+    pinyinDic.addFile(filePath, `img/${file}`);
+    zhuyinDic.addFile(filePath, `img/${file}`);
   });
 }

@@ -1,5 +1,5 @@
 import { TermEntry, type Dictionary } from "yomichan-dict-builder";
-import { splitByElement } from "../../utils.ts";
+import { filterUntil, splitByElement } from "../../utils.ts";
 import type { ParsedTerm } from "../shared.ts";
 import * as cheerio from "cheerio";
 import type { StructuredContentNode } from "yomichan-dict-builder/dist/types/yomitan/termbank";
@@ -28,6 +28,8 @@ function traverse($: cheerio.CheerioAPI, node: AnyNode): StructuredContentNode {
         // ignore
         case "x-hw":
         case "x-hws":
+          def.data.guifan = "simp";
+          return def;
         case "x-pr":
         case "script":
           return "";
@@ -92,7 +94,10 @@ export async function processGuifan(
         (d) => d.type === ElementType.Tag && d.tagName === "x-pr"
       );
       const reading = readingNode ? $(readingNode).text() : "";
-      const tradNode = definitionSection.find(
+      const tradNode = filterUntil(
+        definitionSection,
+        (node) => node.type === ElementType.Tag && node.tagName === "dt"
+      ).find(
         (d) =>
           d.type === ElementType.Text &&
           $(d)
@@ -104,6 +109,10 @@ export async function processGuifan(
         .map((e) => traverse($, e))
         .filter((n) => n !== "") as StructuredContentNode[];
       if (tradNode) {
+        const bef = definitionsMain.shift();
+        if (!bef) throw new Error("shouldn't happen 1");
+        if ((bef as any).data?.guifan !== "simp" && (bef as any) !== "(img)")
+          throw new Error("shouldn't happen 2" + JSON.stringify(bef));
         definitionsMain.unshift({
           tag: "span",
           content:
@@ -115,6 +124,7 @@ export async function processGuifan(
           data: { guifan: "trad" },
           lang: "zh-TW",
         });
+        definitionsMain.unshift(bef);
       }
       const definitionContentsForReading = {
         tag: "span",
@@ -122,7 +132,6 @@ export async function processGuifan(
         data: { guifan: "definitions-parent" },
         lang: "zh-CN",
       } satisfies StructuredContentNode;
-
       const pinyinTermEntry = new TermEntry(term.headword)
         .setReading(reading ?? "")
         .addDetailedDefinition({
@@ -139,7 +148,6 @@ export async function processGuifan(
         pinyinDic.addTerm(pinyinTermEntry.build()),
         zhuyinDic.addTerm(zhuyinTermEntry.build()),
       ]);
-      continue;
     }
     if (++i % 10000 === 0) {
       console.log(`Processed ${i} terms.`);

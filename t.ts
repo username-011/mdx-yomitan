@@ -1,6 +1,6 @@
 import { findSyllableBoundaries } from "pinyin-tone-tool";
 
-const word = "zhuǐr";
+const word = "qiènuò";
 const out = findSyllableBoundaries(word);
 console.log(`word: ${word}`);
 console.log(

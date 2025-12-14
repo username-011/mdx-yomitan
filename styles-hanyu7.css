@@ -1,0 +1,85 @@
+font-family: "Noto Sans CJK SC";
+
+[data-sc-hanyu7="def"] {
+  display: block;
+}
+[data-sc-hanyu7="simp"] {
+  display: inline-block;
+  line-height: 1;
+  background: #111;
+  color: #257de4;
+  border: 1px solid #454545;
+  border-radius: 4px;
+  padding: 4px;
+  font-size: 1.1em;
+  vertical-align: bottom;
+  margin-right: 6px;
+}
+[data-sc-hanyu7="trad"] {
+  display: inline-block;
+  line-height: 1;
+  background: #111;
+  color: #e42566;
+  border: 1px solid #454545;
+  border-radius: 4px;
+  padding: 4px;
+  font-size: 1.1em;
+  vertical-align: bottom;
+}
+[data-sc-hanyu7="ps"] {
+  display: inline-block;
+  line-height: 1;
+  background: #111;
+  border: 1px solid #454545;
+  border-radius: 4px;
+  padding: 2px;
+  color: white;
+  margin-inline: 3px;
+}
+[data-sc-hanyu7="ex"] {
+  color: #588484;
+}
+[data-sc-hanyu7="sup"] {
+  vertical-align: super;
+  font-size: x-small;
+}
+[data-sc-hanyu7="sub"] {
+  vertical-align: text-bottom;
+  font-size: x-small;
+}
+[data-sc-hanyu7="small"] {
+  font-size: x-small;
+}
+[data-sc-hanyu7="div"] {
+  display: block;
+}
+[data-sc-class="title"] {
+  text-decoration: underline;
+  text-decoration-style: dashed;
+  text-underline-offset: 3px;
+  color: #da98cb;
+}
+[data-sc-class="cont"] {
+  display: block;
+  background-color: rgb(197 241 244 / 10%);
+  border-radius: 8px;
+  margin-top: 4px;
+  margin-bottom: 2px;
+  color: #bab99e;
+  padding-inline: 4px;
+  padding-bottom: 4px;
+  padding: 6px;
+}
+a {
+  color: #b971b9;
+}
+[data-sc-class="cont"] a {
+  margin-right: 6px;
+}
+[data-sc-class="cont"] a:nth-child(even) {
+  margin-right: 6px;
+  color: #9471b9;
+}
+details:last-child {
+  margin-bottom: 4px;
+}
