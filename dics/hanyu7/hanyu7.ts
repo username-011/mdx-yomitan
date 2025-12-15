@@ -151,7 +151,7 @@ export async function processHanyu7(
               },
               {
                 tag: "span",
-                content: p2z(r.replaceAll("·", " ")),
+                content: p2z(r.replaceAll("·", " ")).replaceAll(" ", ""),
                 data: { hanyu7: "zhuyin" },
               },
             ] satisfies StructuredContentNode;
@@ -183,7 +183,7 @@ export async function processHanyu7(
           content: definitionContentsForReading,
         });
       const zhuyinTermEntry = new TermEntry(term.headword)
-        .setReading(p2z(reading))
+        .setReading(p2z(reading).replaceAll(" ", ""))
         .addDetailedDefinition({
           type: "structured-content",
           content: definitionContentsForReading,
