@@ -94,3 +94,6 @@ details:last-child {
 [data-sc-hanyu7="pinyin"] {
   display: none;
 }
+[data-sc-hanyu7="zhuyin"] {
+  color: #b971b9;
+}
