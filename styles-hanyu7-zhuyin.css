@@ -95,5 +95,5 @@ details:last-child {
   display: none;
 }
 [data-sc-hanyu7="zhuyin"] {
-  color: #c64646;
+  color: gray;
 }
