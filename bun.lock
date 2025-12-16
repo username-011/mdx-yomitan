@@ -79,7 +79,7 @@
 
     "pinyin-to-zhuyin": ["pinyin-to-zhuyin@git+ssh://git@github.com:logicmason/pinyin-zhuyin.git#3ea078be334fb52287362f5d4b65e2c3ddec9d4f", { "bin": { "p2z": "./p2z.js", "z2p": "./z2p.js" } }, "3ea078be334fb52287362f5d4b65e2c3ddec9d4f"],
 
-    "pinyin-tone-tool": ["pinyin-tone-tool@1.0.2", "", { "bin": { "markTones": "markTones.js", "numberTones": "numberTones.js", "segmentWord": "segmentWord.js" } }, "sha512-nc/lf3NMqHvtNG/eyTduSYFaeMFtz+9xvPpxB0CrKifaGgKD8yDsMs/vJiUKZdHl0TXmsd8uofB8hkxdeG6bhg=="],
+    "pinyin-tone-tool": ["pinyin-tone-tool@1.0.3", "", { "bin": { "markTones": "markTones.js", "numberTones": "numberTones.js", "segmentWord": "segmentWord.js" } }, "sha512-KglQxxFPidBn6TuEWKNwCvdR4Vl41mccVaNK/WCthd5rENNx+eJyf3KcXR+vZJws/2NmP3Ayq07R1TSnJQKU9w=="],
 
     "process-nextick-args": ["process-nextick-args@2.0.1", "", {}, "sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag=="],
 

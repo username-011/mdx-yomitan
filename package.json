@@ -14,7 +14,7 @@
   "dependencies": {
     "cheerio": "^1.1.2",
     "pinyin-to-zhuyin": "git@github.com:logicmason/pinyin-zhuyin.git",
-    "pinyin-tone-tool": "^1.0.2",
+    "pinyin-tone-tool": "^1.0.3",
     "ramda": "^0.32.0",
     "yomichan-dict-builder": "^2.10.0"
   }
