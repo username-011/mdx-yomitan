@@ -150,7 +150,9 @@ export async function processGuifan(
           content: definitionContentsForReading,
         });
       const zhuyinTermEntry = new TermEntry(term.headword)
-        .setReading(p2z(reading ?? "").replaceAll(" ", ""))
+        .setReading(
+          p2z((reading ?? "").replaceAll("-", " ")).replaceAll(" ", "")
+        )
         .addDetailedDefinition({
           type: "structured-content",
           content: definitionContentsForReading,
