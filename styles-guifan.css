@@ -11,9 +11,8 @@
   border-radius: 4px;
   padding: 4px;
   font-size: 1.1em;
-  vertical-align: top;
   margin-right: 6px;
-  margin-bottom: 2px;
+  vertical-align: bottom;
 }
 [data-sc-guifan="trad"] {
   display: inline-block;
@@ -24,8 +23,7 @@
   border-radius: 4px;
   padding: 4px;
   font-size: 1.1em;
-  vertical-align: top;
-  margin-bottom: 2px;
+  vertical-align: bottom;
 }
 
 :is([data-sc-guifan="x-gram"], [data-sc-guifan="x-g"], [data-sc-guifan="x-m"]) {
