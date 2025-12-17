@@ -151,7 +151,7 @@ export async function processGuifan(
         });
       const zhuyinTermEntry = new TermEntry(term.headword)
         .setReading(
-          p2z((reading ?? "").replaceAll("-", " ")).replaceAll(" ", "")
+          p2z((reading ?? "").replace(/-|\/\//g, " ")).replaceAll(" ", "")
         )
         .addDetailedDefinition({
           type: "structured-content",
