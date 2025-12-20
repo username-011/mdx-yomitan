@@ -173,7 +173,8 @@ export async function processHanyu7(
       const youSplit = reading.split("又");
       if (youSplit.length > 1) {
         reading = youSplit[0]!;
-        entryContents.splice(1, 0, `(${youSplit.slice(1).join("又")})`);
+        const anotherReading = youSplit[1]!;
+        entryContents.splice(1, 0, `(又 ${anotherReading})`);
       }
       const definitionContentsForReading = {
         tag: "span",
