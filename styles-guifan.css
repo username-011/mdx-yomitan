@@ -24,7 +24,7 @@
   padding: 4px;
   font-size: 1.1em;
   vertical-align: bottom;
-  font-family: "Noto Serif CJK TC", sans-serif;
+  font-family: "Noto Sans CJK TC", sans-serif;
 }
 
 :is([data-sc-guifan="x-gram"], [data-sc-guifan="x-g"], [data-sc-guifan="x-m"]) {
