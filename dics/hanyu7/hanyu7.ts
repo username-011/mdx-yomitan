@@ -139,6 +139,7 @@ export async function processHanyu7(
         .toArray()
         .map((el) =>
           traverse($, el, term.headword, (r) => {
+            r = r.replace(/-|\/\//g, " ");
             if (!reading) {
               reading = r;
               return "";
@@ -181,7 +182,6 @@ export async function processHanyu7(
         data: { hanyu7: "definitions-parent" },
         lang: "zh-CN",
       } satisfies StructuredContentNode;
-      reading = reading.replace(/-|\/\//g, " ");
       const pinyinTermEntry = new TermEntry(term.headword)
         .setReading(reading)
         .addDetailedDefinition({
