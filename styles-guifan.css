@@ -1,5 +1,5 @@
 & {
-  font-family: "Noto Sans CJK SC", sans-serif;
+  font-family: sans-serif;
 }
 
 [data-sc-guifan="simp"] {
@@ -13,7 +13,6 @@
   font-size: 1.1em;
   margin-right: 6px;
   vertical-align: bottom;
-  font-family: "Noto Sans CJK SC", sans-serif;
 }
 [data-sc-guifan="trad"] {
   display: inline-block;
@@ -25,7 +24,6 @@
   padding: 4px;
   font-size: 1.1em;
   vertical-align: bottom;
-  font-family: "Noto Sans CJK TC", sans-serif;
 }
 
 :is([data-sc-guifan="x-gram"], [data-sc-guifan="x-g"], [data-sc-guifan="x-m"]) {
