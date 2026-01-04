@@ -93,7 +93,7 @@ export async function processGuifan(
           content: {
             tag: "a",
             href: `?${urlParams}`,
-            content: linkedTerm,
+            content: `→${linkedTerm}`,
             lang: "zh-CN",
           },
         });
