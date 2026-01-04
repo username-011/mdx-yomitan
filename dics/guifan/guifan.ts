@@ -82,11 +82,20 @@ export async function processGuifan(
     let linkMatch: RegExpMatchArray | null = null;
     if ((linkMatch = term.xmlString.match(/@@@LINK=(.+?)/))) {
       const linkedTerm = linkMatch[1]!;
+      const urlParams = new URLSearchParams({
+        query: linkedTerm,
+        wildcards: "off",
+      }).toString();
       const termEntry = new TermEntry(term.headword)
         .setReading("")
         .addDetailedDefinition({
           type: "structured-content",
-          content: { tag: "span", content: `→${linkedTerm}`, lang: "zh-CN" },
+          content: {
+            tag: "a",
+            href: `?${urlParams}`,
+            content: linkedTerm,
+            lang: "zh-CN",
+          },
         });
       await Promise.all([
         pinyinDic.addTerm(termEntry.build()),
