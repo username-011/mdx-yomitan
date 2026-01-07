@@ -6,20 +6,37 @@ import type { StructuredContentNode } from "yomichan-dict-builder/dist/types/yom
 import { ElementType } from "domelementtype";
 import type { AnyNode, Element, Text } from "domhandler";
 import { p2z } from "pinyin-to-zhuyin";
+import { writeFileSync } from "fs";
+import { createHash } from "crypto";
 
-function traverse($: cheerio.CheerioAPI, node: AnyNode): StructuredContentNode {
+async function addImage(b64: string, dic: Dictionary, name: string) {
+  b64 = b64.replace(/^data:\w+\/\w+;base64,/g, "");
+  writeFileSync(
+    `data/mdx-guifan-2/img/${name}.png`,
+    Buffer.from(b64, "base64")
+  );
+  await dic.addFile(`data/mdx-guifan-2/img/${name}.png`, `img/${name}.png`);
+}
+
+async function traverse(
+  $: cheerio.CheerioAPI,
+  node: AnyNode,
+  dics: Dictionary[]
+): Promise<StructuredContentNode> {
   switch (node.type) {
     case ElementType.Text:
       return node.data.trim();
     case ElementType.Tag:
       const cheerioEl = $(node);
-      const contents = cheerioEl.contents();
+      const contents = await Promise.all(
+        cheerioEl
+          .contents()
+          .map((_, el) => traverse($, el, dics))
+          .toArray()
+      );
       const def = {
         tag: "span",
-        content: contents
-          .map((_, el) => traverse($, el))
-          .toArray()
-          .filter((c) => c !== ""),
+        content: contents.filter((c) => c !== ""),
         data: {
           guifan: node.tagName ?? "no-tag",
           class: node.attribs["class"],
@@ -44,8 +61,20 @@ function traverse($: cheerio.CheerioAPI, node: AnyNode): StructuredContentNode {
             href: `?${urlParams}`,
             content: def.content,
           };
-        case "img":
-          return "(img)";
+        case "img": {
+          const src = node.attribs["src"];
+          if (!src) return "";
+          const hash = createHash("sha256").update(src).digest("hex");
+          await Promise.all(dics.map((dic) => addImage(src, dic, hash)));
+          return {
+            tag: "img",
+            path: `img/${hash}.png`,
+            collapsed: false,
+            collapsible: false,
+            height: 1.2,
+            sizeUnits: "em",
+          };
+        }
         case "x-hwp":
           const next = node.next?.next;
           const res = ["←", def] as StructuredContentNode[];
@@ -126,14 +155,14 @@ export async function processGuifan(
             .match(/（.+?）/g)
       );
       definitionSection = definitionSection.filter((e) => e !== tradNode);
-      const definitionsMain = definitionSection
-        .map((e) => traverse($, e))
-        .filter((n) => n !== "") as StructuredContentNode[];
+      const definitionsMain = (
+        await Promise.all(
+          definitionSection.map((e) => traverse($, e, [pinyinDic, zhuyinDic]))
+        )
+      ).filter((n) => n !== "") as StructuredContentNode[];
       if (tradNode) {
         const bef = definitionsMain.shift();
         if (!bef) throw new Error("shouldn't happen 1");
-        if ((bef as any).data?.guifan !== "simp" && (bef as any) !== "(img)")
-          throw new Error("shouldn't happen 2" + JSON.stringify(bef));
         definitionsMain.unshift({
           tag: "span",
           content:
