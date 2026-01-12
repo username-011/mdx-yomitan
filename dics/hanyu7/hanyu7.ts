@@ -139,7 +139,7 @@ export async function processHanyu7(
         .toArray()
         .map((el) =>
           traverse($, el, term.headword, (r) => {
-            r = r.replace(/-|\/\//g, " ");
+            r = r.replace(/[-·’]|\/\//g, " ");
             if (!reading) {
               reading = r;
               return "";
@@ -152,14 +152,13 @@ export async function processHanyu7(
               },
               {
                 tag: "span",
-                content: p2z(r.replaceAll("·", " ")).replaceAll(" ", ""),
+                content: p2z(r).replaceAll(" ", ""),
                 data: { hanyu7: "zhuyin" },
               },
             ] satisfies StructuredContentNode;
           })
         )
         .filter((n) => n !== "") as StructuredContentNode[];
-      reading = reading.replaceAll("·", " ");
       const weirdReadingMatch = reading.match(
         /(?<normal>.*?)（(?<altReading>.+?)）/
       );
