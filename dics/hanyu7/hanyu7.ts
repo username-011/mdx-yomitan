@@ -12,7 +12,7 @@ function traverse(
   $: CheerioAPI,
   node: AnyNode,
   term: string,
-  onReading: (s: string) => StructuredContentNode
+  onReading: (s: string) => StructuredContentNode,
 ): StructuredContentNode {
   switch (node.type) {
     case ElementType.Text:
@@ -67,14 +67,14 @@ function traverse(
               tag: "span",
               content: content,
               data: { hanyu7: "simp" },
-            } satisfies StructuredContentNode);
+            }) satisfies StructuredContentNode;
           const getTrad = (content: StructuredContentNode) =>
             ({
               tag: "span",
               content: content,
               lang: "zh-TW",
               data: { hanyu7: "trad" },
-            } satisfies StructuredContentNode);
+            }) satisfies StructuredContentNode;
           const lastEl = def.content.at(-1);
           if (def.content.length > 1 && lastEl && !(lastEl as any).tag) {
             const s = lastEl as string;
@@ -127,7 +127,7 @@ function traverse(
 
 export async function processHanyu7(
   terms: ParsedTerm[],
-  [pinyinDic, zhuyinDic]: [Dictionary, Dictionary]
+  [pinyinDic, zhuyinDic]: [Dictionary, Dictionary],
 ) {
   let i = 0;
   for (const term of terms) {
@@ -156,11 +156,11 @@ export async function processHanyu7(
                 data: { hanyu7: "zhuyin" },
               },
             ] satisfies StructuredContentNode;
-          })
+          }),
         )
         .filter((n) => n !== "") as StructuredContentNode[];
       const weirdReadingMatch = reading.match(
-        /(?<normal>.*?)（(?<altReading>.+?)）/
+        /(?<normal>.*?)（(?<altReading>.+?)）/,
       );
       if (weirdReadingMatch) {
         const [r1, r2] = [
@@ -186,13 +186,15 @@ export async function processHanyu7(
         .addDetailedDefinition({
           type: "structured-content",
           content: definitionContentsForReading,
-        });
+        })
+        .setDefinitionTags("pinyin");
       const zhuyinTermEntry = new TermEntry(term.headword)
         .setReading(p2z(reading).replaceAll(" ", ""))
         .addDetailedDefinition({
           type: "structured-content",
           content: definitionContentsForReading,
-        });
+        })
+        .setDefinitionTags("zhuyin");
       await Promise.all([
         pinyinDic.addTerm(pinyinTermEntry.build()),
         zhuyinDic.addTerm(zhuyinTermEntry.build()),

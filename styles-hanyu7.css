@@ -105,9 +105,22 @@ details:last-child {
   padding: 6px;
 }
 
-[data-sc-hanyu7="pinyin"] {
-  display: none;
+:has(span.tag[data-details="zhuyin"]) {
+  [data-sc-hanyu7="zhuyin"] {
+    color: #b971b9;
+  }
+  [data-sc-hanyu7="pinyin"] {
+    display: none;
+  }
 }
-[data-sc-hanyu7="zhuyin"] {
-  color: #b971b9;
+:has(span.tag[data-details="pinyin"]) {
+  [data-sc-hanyu7="pinyin"] {
+    color: #b971b9;
+  }
+  [data-sc-hanyu7="zhuyin"] {
+    display: none;
+  }
+}
+:is(span.tag[data-details="pinyin"], span.tag[data-details="zhuyin"]) {
+  display: none;
 }

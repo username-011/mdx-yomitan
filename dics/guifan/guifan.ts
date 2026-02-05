@@ -17,7 +17,7 @@ async function addImage(b64: string, dic: Dictionary, name: string) {
   mkdirSync("data/mdx-guifan-2/img", { recursive: true });
   writeFileSync(
     `data/mdx-guifan-2/img/${name}.png`,
-    Buffer.from(b64, "base64")
+    Buffer.from(b64, "base64"),
   );
   await dic.addFile(`data/mdx-guifan-2/img/${name}.png`, `img/${name}.png`);
 }
@@ -25,7 +25,7 @@ async function addImage(b64: string, dic: Dictionary, name: string) {
 async function traverse(
   $: cheerio.CheerioAPI,
   node: AnyNode,
-  dics: Dictionary[]
+  dics: Dictionary[],
 ): Promise<StructuredContentNode> {
   switch (node.type) {
     case ElementType.Text:
@@ -36,7 +36,7 @@ async function traverse(
         cheerioEl
           .contents()
           .map((_, el) => traverse($, el, dics))
-          .toArray()
+          .toArray(),
       );
       const def = {
         tag: "span",
@@ -82,15 +82,29 @@ async function traverse(
         case "x-hwp":
           const next = node.next?.next;
           const res = ["←", def] as StructuredContentNode[];
-          if (next?.type === ElementType.Tag && next.tagName === "x-pr")
+          if (next?.type === ElementType.Tag && next.tagName === "x-pr") {
+            const pReading = $(next).text();
+            const zReading = p2z(pReading).replaceAll(" ", "");
             res.push({
               tag: "span",
-              content: $(next).text(),
+              content: [
+                {
+                  tag: "span",
+                  content: pReading,
+                  data: { guifan: "reading-pinyin" },
+                },
+                {
+                  tag: "span",
+                  content: zReading,
+                  data: { guifan: "reading-zhuyin" },
+                },
+              ],
               data: {
                 guifan: next.tagName ?? "no-tag",
                 class: next.attribs["class"],
               },
             } as StructuredContentNode);
+          }
           return res;
         case "br":
           return "\n";
@@ -108,7 +122,7 @@ async function traverse(
 // todo: actually add the base64 images where they rarely exist
 export async function processGuifan(
   terms: ParsedTerm[],
-  [pinyinDic, zhuyinDic]: [Dictionary, Dictionary]
+  [pinyinDic, zhuyinDic]: [Dictionary, Dictionary],
 ) {
   let i = 0;
   const linkedToDb = {} as Record<string, DetailedDefinition>;
@@ -123,28 +137,28 @@ export async function processGuifan(
     for (let definitionSection of splitByElement($, $(".HYGF2"), "hr").map(
       (section) =>
         section.filter(
-          (e) => !(e.type === ElementType.Text && $(e).text() === "\n")
-        )
+          (e) => !(e.type === ElementType.Text && $(e).text() === "\n"),
+        ),
     )) {
       const readingNode = definitionSection.find(
-        (d) => d.type === ElementType.Tag && d.tagName === "x-pr"
+        (d) => d.type === ElementType.Tag && d.tagName === "x-pr",
       );
       let reading = readingNode ? $(readingNode).text() : "";
       reading = reading.replace(/-|\/\//g, " ");
       const tradNode = filterUntil(
         definitionSection,
-        (node) => node.type === ElementType.Tag && node.tagName === "dt"
+        (node) => node.type === ElementType.Tag && node.tagName === "dt",
       ).find(
         (d) =>
           d.type === ElementType.Text &&
           $(d)
             .text()
-            .match(/（.+?）/g)
+            .match(/（.+?）/g),
       );
       definitionSection = definitionSection.filter((e) => e !== tradNode);
       const definitionsMain = (
         await Promise.all(
-          definitionSection.map((e) => traverse($, e, [pinyinDic, zhuyinDic]))
+          definitionSection.map((e) => traverse($, e, [pinyinDic, zhuyinDic])),
         )
       ).filter((n) => n !== "") as StructuredContentNode[];
       if (tradNode) {
@@ -177,15 +191,17 @@ export async function processGuifan(
       const linkedReading = definitionsMain.find(
         (e) =>
           typeof e === "object" &&
-          (e as any).find?.((ee: any) => ee.data?.guifan === "x-hwp")
+          (e as any).find?.((ee: any) => ee.data?.guifan === "x-hwp"),
       );
       if (linkedReading) linkedToDb[term.headword] = definition;
       const pinyinTermEntry = new TermEntry(term.headword)
         .setReading(reading)
-        .addDetailedDefinition(definition);
+        .addDetailedDefinition(definition)
+        .setDefinitionTags("pinyin");
       const zhuyinTermEntry = new TermEntry(term.headword)
         .setReading(p2z(reading).replaceAll(" ", ""))
-        .addDetailedDefinition(definition);
+        .addDetailedDefinition(definition)
+        .setDefinitionTags("zhuyin");
       await Promise.all([
         pinyinDic.addTerm(pinyinTermEntry.build()),
         zhuyinDic.addTerm(zhuyinTermEntry.build()),
@@ -203,7 +219,7 @@ export async function processGuifan(
       // wtf is this bug. I don't care enough for these 2 words -_-
       // maybe someday in distant future I'll get to it
       console.log(
-        `Linked term not found, toLinked: ${toLinked}, fromLinked: ${fromLinked}`
+        `Linked term not found, toLinked: ${toLinked}, fromLinked: ${fromLinked}`,
       );
       continue;
     }
@@ -212,7 +228,7 @@ export async function processGuifan(
     for (const e of (toLinkedTermDefinition as any).content.content) {
       const f = (e as any).find?.((ee: any) => ee.data?.guifan === "x-pr");
       if (f) {
-        actualReading = f.content;
+        actualReading = f.content[1].content;
         break;
       }
     }

@@ -127,3 +127,17 @@ a {
 [data-sc-guifan="dd"][data-sc-class="x-ext1"] {
   margin-left: -0.6em;
 }
+
+:has(span.tag[data-details="zhuyin"]) {
+  [data-sc-guifan="reading-pinyin"] {
+    display: none;
+  }
+}
+:has(span.tag[data-details="pinyin"]) {
+  [data-sc-guifan="reading-zhuyin"] {
+    display: none;
+  }
+}
+:is(span.tag[data-details="pinyin"], span.tag[data-details="zhuyin"]) {
+  display: none;
+}
