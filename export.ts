@@ -4,6 +4,16 @@ import { processGuifan } from "./dics/guifan/guifan.ts";
 import { processHanyu7 } from "./dics/hanyu7/hanyu7.ts";
 import { mergeCssFiles } from "./utils/css.ts";
 
+// JSZip re-encodes string inputs to UTF-8 in 16 KiB chunks, so a surrogate pair (an astral CJK
+// character) that straddles a chunk boundary turns into two U+FFFD characters. Hand it bytes.
+(Dictionary.prototype as any).saveJsonToZip = async function (
+  fileName: string,
+  data: unknown,
+) {
+  this.zip.file(fileName, Buffer.from(JSON.stringify(data), "utf8"));
+};
+
+
 const versions = {
   guifan: "2026/02/12.1",
   hanyu7: "2026/02/09.1",
@@ -15,6 +25,7 @@ const guifanPinyinIndex = new DictionaryIndex()
   .setTitle("现代汉语规范词典 拼音")
   .setRevision(versions.guifan)
   .setAuthor("shadow")
+  .setSequenced(true)
   .setAttribution("外语教学与研究出版社 (2010)")
   .setDescription("A monolingual dictionary of Simplified Mandarin Chinese.")
   .setIsUpdatable(true)
@@ -31,6 +42,7 @@ const guifanZhuyinIndex = new DictionaryIndex()
   .setTitle("现代汉语规范词典 注音")
   .setRevision(versions.guifan)
   .setAuthor("shadow")
+  .setSequenced(true)
   .setAttribution("外语教学与研究出版社 (2010)")
   .setDescription("A monolingual dictionary of Simplified Mandarin Chinese.")
   .setIsUpdatable(true)
@@ -59,6 +71,7 @@ const hanyu7PinyinIndex = new DictionaryIndex()
   .setTitle("现代汉语词典 拼音")
   .setRevision(versions.hanyu7)
   .setAuthor("shadow")
+  .setSequenced(true)
   .setAttribution("外语教学与研究出版社 (2016)")
   .setDescription("A monolingual dictionary of Simplified Mandarin Chinese.")
   .setIsUpdatable(true)
@@ -74,6 +87,7 @@ const hanyu7ZhuyinIndex = new DictionaryIndex()
   .setTitle("现代汉语词典 注音")
   .setRevision(versions.hanyu7)
   .setAuthor("shadow")
+  .setSequenced(true)
   .setAttribution("外语教学与研究出版社 (2016)")
   .setDescription("A monolingual dictionary of Simplified Mandarin Chinese.")
   .setIsUpdatable(true)

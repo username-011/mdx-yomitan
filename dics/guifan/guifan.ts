@@ -1,6 +1,6 @@
-import { TermEntry, type Dictionary } from "yomichan-dict-builder";
+import { type Dictionary } from "yomichan-dict-builder";
 import { filterUntil, splitByElement } from "../../utils.ts";
-import type { ParsedTerm } from "../shared.ts";
+import { addRows, splitVariantForms, type ParsedTerm } from "../shared.ts";
 import * as cheerio from "cheerio";
 import type {
   DetailedDefinition,
@@ -85,18 +85,20 @@ async function traverse(
           if (next?.type === ElementType.Tag && next.tagName === "x-pr") {
             const pReading = $(next).text();
             const zReading = p2z(pReading).replaceAll(" ", "");
+            // Both systems are always present in the content (identical in both editions);
+            // each edition hides the other one through styles.css using `readingTag` (rendered as `data-sc-reading-tag`).
             res.push({
               tag: "span",
               content: [
                 {
                   tag: "span",
                   content: pReading,
-                  data: { guifan: "reading-pinyin" },
+                  data: { guifan: "reading-pinyin", readingTag: "pinyin" },
                 },
                 {
                   tag: "span",
                   content: zReading,
-                  data: { guifan: "reading-zhuyin" },
+                  data: { guifan: "reading-zhuyin", readingTag: "zhuyin" },
                 },
               ],
               data: {
@@ -125,6 +127,9 @@ export async function processGuifan(
   [pinyinDic, zhuyinDic]: [Dictionary, Dictionary],
 ) {
   let i = 0;
+  // One sequence number per dictionary entry (a reading section of a headword), shared by the
+  // simplified and traditional rows and by both editions.
+  let sequence = 0;
   const linkedToDb = {} as Record<string, DetailedDefinition>;
   const linkedQueue = {} as Record<string, string>;
   for (const term of terms /* .filter((t) => t.headword === "埃") */) {
@@ -161,17 +166,19 @@ export async function processGuifan(
           definitionSection.map((e) => traverse($, e, [pinyinDic, zhuyinDic])),
         )
       ).filter((n) => n !== "") as StructuredContentNode[];
+      const tradText = tradNode
+        ? ($(tradNode)
+            .text()
+            .trim()
+            .match(/（(.+?)）/)
+            ?.at(1) ?? "")
+        : "";
       if (tradNode) {
         const bef = definitionsMain.shift();
         if (!bef) throw new Error("shouldn't happen 1");
         definitionsMain.unshift({
           tag: "span",
-          content:
-            $(tradNode)
-              .text()
-              .trim()
-              .match(/（(.+?)）/)
-              ?.at(1) ?? "",
+          content: tradText,
           data: { guifan: "trad" },
           lang: "zh-TW",
         });
@@ -194,16 +201,24 @@ export async function processGuifan(
           (e as any).find?.((ee: any) => ee.data?.guifan === "x-hwp"),
       );
       if (linkedReading) linkedToDb[term.headword] = definition;
-      const pinyinTermEntry = new TermEntry(term.headword)
-        .setReading(reading)
-        .addDetailedDefinition(definition);
-      const zhuyinTermEntry = new TermEntry(term.headword)
-        .setReading(p2z(reading).replaceAll(" ", ""))
-        .addDetailedDefinition(definition);
-      await Promise.all([
-        pinyinDic.addTerm(pinyinTermEntry.build()),
-        zhuyinDic.addTerm(zhuyinTermEntry.build()),
-      ]);
+      const entrySequence = ++sequence;
+      await addRows(
+        [pinyinDic, zhuyinDic],
+        term.headword,
+        reading,
+        definition,
+        entrySequence,
+      );
+      // the traditional form(s) get their own rows, tied to the same entry by the sequence
+      for (const tradForm of splitVariantForms(tradText, term.headword)) {
+        await addRows(
+          [pinyinDic, zhuyinDic],
+          tradForm,
+          reading,
+          definition,
+          entrySequence,
+        );
+      }
     }
     if (++i % 10000 === 0) {
       console.log(`Processed ${i} terms.`);
@@ -226,20 +241,18 @@ export async function processGuifan(
     for (const e of (toLinkedTermDefinition as any).content.content) {
       const f = (e as any).find?.((ee: any) => ee.data?.guifan === "x-pr");
       if (f) {
-        actualReading = f.content[1].content;
+        actualReading = f.content[0].content;
         break;
       }
     }
-    const pinyinTerm = new TermEntry(fromLinked)
-      .setReading(actualReading)
-      .addDetailedDefinition(toLinkedTermDefinition);
-    const zhuyinTerm = new TermEntry(fromLinked)
-      .setReading(p2z(actualReading).replaceAll(" ", ""))
-      .addDetailedDefinition(toLinkedTermDefinition);
-    await Promise.all([
-      pinyinDic.addTerm(pinyinTerm.build()),
-      zhuyinDic.addTerm(zhuyinTerm.build()),
-    ]);
+    // linked (@@@LINK) headwords are separate entries that reuse the target's definition
+    await addRows(
+      [pinyinDic, zhuyinDic],
+      fromLinked,
+      actualReading,
+      toLinkedTermDefinition,
+      ++sequence,
+    );
     j++;
   }
   console.log(`Processed ${j} linked terms.`);

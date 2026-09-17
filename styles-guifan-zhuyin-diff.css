@@ -1,3 +1,4 @@
-[data-sc-guifan="reading-pinyin"] {
+/* zhuyin edition: content carries both systems, hide the other one */
+[data-sc-reading-tag="pinyin"] {
   display: none;
 }

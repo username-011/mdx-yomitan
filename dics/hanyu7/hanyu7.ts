@@ -1,5 +1,5 @@
-import { TermEntry, type Dictionary } from "yomichan-dict-builder";
-import type { ParsedTerm } from "../shared";
+import { type Dictionary } from "yomichan-dict-builder";
+import { addRows, splitVariantForms, type ParsedTerm } from "../shared";
 import { load, type CheerioAPI } from "cheerio";
 import type { AnyNode } from "domhandler";
 import type { StructuredContentNode } from "yomichan-dict-builder/dist/types/yomitan/termbank";
@@ -13,6 +13,7 @@ function traverse(
   node: AnyNode,
   term: string,
   onReading: (s: string) => StructuredContentNode,
+  onTraditional: (s: string) => void,
 ): StructuredContentNode {
   switch (node.type) {
     case ElementType.Text:
@@ -23,7 +24,7 @@ function traverse(
       const def = {
         tag: "span" as "span" | TableElements,
         content: contents
-          .map((_, el) => traverse($, el, term, onReading))
+          .map((_, el) => traverse($, el, term, onReading, onTraditional))
           .toArray()
           .filter((c) => c !== ""),
         data: {
@@ -62,6 +63,10 @@ function traverse(
             content: def.content,
           };
         case "hw":
+          // every traditional/variant form in the parentheses, markers included ("輝、*煇"),
+          // becomes an extra lookup row; the display logic below stays as it was
+          const hwParen = cheerioEl.text().match(/（(.+?)）/)?.at(1);
+          if (hwParen) onTraditional(hwParen);
           const getSimp = (content: StructuredContentNode) =>
             ({
               tag: "span",
@@ -130,33 +135,45 @@ export async function processHanyu7(
   [pinyinDic, zhuyinDic]: [Dictionary, Dictionary],
 ) {
   let i = 0;
+  // One sequence number per <entry> (a reading of a headword), shared by the simplified and
+  // traditional rows and by both editions.
+  let sequence = 0;
   for (const term of terms) {
     const $ = load(term.xmlString);
     for (const entryEl of $("entry").toArray()) {
       let reading = "";
+      const traditionalForms: string[] = [];
       const entryContents = $(entryEl)
         .contents()
         .toArray()
         .map((el) =>
-          traverse($, el, term.headword, (r) => {
-            r = r.replace(/[-·’]|\/\//g, " ");
-            if (!reading) {
-              reading = r;
-              return "";
-            }
-            return [
-              {
-                tag: "span",
-                content: r,
-                data: { hanyu7: "pinyin" },
-              },
-              {
-                tag: "span",
-                content: p2z(r).replaceAll(" ", ""),
-                data: { hanyu7: "zhuyin" },
-              },
-            ] satisfies StructuredContentNode;
-          }),
+          traverse(
+            $,
+            el,
+            term.headword,
+            (r) => {
+              r = r.replace(/[-·’]|\/\//g, " ");
+              if (!reading) {
+                reading = r;
+                return "";
+              }
+              // Both systems are always present in the content (identical in both editions);
+              // each edition hides the other one through styles.css using `readingTag` (rendered as `data-sc-reading-tag`).
+              return [
+                {
+                  tag: "span",
+                  content: r,
+                  data: { hanyu7: "pinyin", readingTag: "pinyin" },
+                },
+                {
+                  tag: "span",
+                  content: p2z(r).replaceAll(" ", ""),
+                  data: { hanyu7: "zhuyin", readingTag: "zhuyin" },
+                },
+              ] satisfies StructuredContentNode;
+            },
+            (t) => traditionalForms.push(t),
+          ),
         )
         .filter((n) => n !== "") as StructuredContentNode[];
       const weirdReadingMatch = reading.match(
@@ -181,22 +198,31 @@ export async function processHanyu7(
         data: { hanyu7: "definitions-parent" },
         lang: "zh-CN",
       } satisfies StructuredContentNode;
-      const pinyinTermEntry = new TermEntry(term.headword)
-        .setReading(reading)
-        .addDetailedDefinition({
-          type: "structured-content",
-          content: definitionContentsForReading,
-        });
-      const zhuyinTermEntry = new TermEntry(term.headword)
-        .setReading(p2z(reading).replaceAll(" ", ""))
-        .addDetailedDefinition({
-          type: "structured-content",
-          content: definitionContentsForReading,
-        });
-      await Promise.all([
-        pinyinDic.addTerm(pinyinTermEntry.build()),
-        zhuyinDic.addTerm(zhuyinTermEntry.build()),
-      ]);
+      const definition = {
+        type: "structured-content" as const,
+        content: definitionContentsForReading,
+      };
+      const entrySequence = ++sequence;
+      await addRows(
+        [pinyinDic, zhuyinDic],
+        term.headword,
+        reading,
+        definition,
+        entrySequence,
+      );
+      // the traditional form(s) get their own rows, tied to the same entry by the sequence
+      for (const tradForm of splitVariantForms(
+        traditionalForms.join("、"),
+        term.headword,
+      )) {
+        await addRows(
+          [pinyinDic, zhuyinDic],
+          tradForm,
+          reading,
+          definition,
+          entrySequence,
+        );
+      }
     }
     if (++i % 10000 === 0) {
       console.log(`Processed ${i} terms.`);
