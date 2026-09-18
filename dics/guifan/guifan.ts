@@ -134,7 +134,7 @@ export async function processGuifan(
   const linkedQueue = {} as Record<string, string>;
   for (const term of terms /* .filter((t) => t.headword === "埃") */) {
     let linkMatch: RegExpMatchArray | null = null;
-    if ((linkMatch = term.xmlString.match(/@@@LINK=(.+?)/))) {
+    if ((linkMatch = term.xmlString.match(/@@@LINK=(.+?)/u))) {
       linkedQueue[term.headword] = linkMatch[1]!;
       continue;
     }
