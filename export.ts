@@ -6,16 +6,12 @@ import { mergeCssFiles } from "./utils/css.ts";
 
 // JSZip re-encodes string inputs to UTF-8 in 16 KiB chunks, so a surrogate pair (an astral CJK
 // character) that straddles a chunk boundary turns into two U+FFFD characters. Hand it bytes.
-(Dictionary.prototype as any).saveJsonToZip = async function (
-  fileName: string,
-  data: unknown,
-) {
+(Dictionary.prototype as any).saveJsonToZip = async function (fileName: string, data: unknown) {
   this.zip.file(fileName, Buffer.from(JSON.stringify(data), "utf8"));
 };
 
-
 const versions = {
-  guifan: "2026/02/12.1",
+  guifan: "2026/10/11.1",
   hanyu7: "2026/02/09.1",
 };
 
@@ -54,16 +50,8 @@ const guifanZhuyinIndex = new DictionaryIndex()
   );
 guifanZhuyinIndex.index.sourceLanguage = "zh";
 guifanZhuyinIndex.index.targetLanguage = "zh";
-await guifanPinyinDic.setIndex(
-  guifanPinyinIndex.build(),
-  "build",
-  "index-guifan-pinyin.json",
-);
-await guifanZhuyinDic.setIndex(
-  guifanZhuyinIndex.build(),
-  "build",
-  "index-guifan-zhuyin.json",
-);
+await guifanPinyinDic.setIndex(guifanPinyinIndex.build(), "build", "index-guifan-pinyin.json");
+await guifanZhuyinDic.setIndex(guifanZhuyinIndex.build(), "build", "index-guifan-zhuyin.json");
 
 const hanyu7PinyinDic = new Dictionary({ fileName: "hanyu7-pinyin.zip" });
 const hanyu7ZhuyinDic = new Dictionary({ fileName: "hanyu7-zhuyin.zip" });
@@ -99,21 +87,11 @@ const hanyu7ZhuyinIndex = new DictionaryIndex()
   );
 hanyu7ZhuyinIndex.index.sourceLanguage = "zh";
 hanyu7ZhuyinIndex.index.targetLanguage = "zh";
-await hanyu7PinyinDic.setIndex(
-  hanyu7PinyinIndex.build(),
-  "build",
-  "index-hanyu7-pinyin.json",
-);
-await hanyu7ZhuyinDic.setIndex(
-  hanyu7ZhuyinIndex.build(),
-  "build",
-  "index-hanyu7-zhuyin.json",
-);
+await hanyu7PinyinDic.setIndex(hanyu7PinyinIndex.build(), "build", "index-hanyu7-pinyin.json");
+await hanyu7ZhuyinDic.setIndex(hanyu7ZhuyinIndex.build(), "build", "index-hanyu7-zhuyin.json");
 
 await processGuifan(
-  readTermsFromFile(
-    `data/mdx-guifan-2/mdx/【现代汉语规范词典(第2版)】.mdx.txt`,
-  ),
+  readTermsFromFile(`data/mdx-guifan-2/mdx/【现代汉语规范词典(第2版)】.mdx.txt`),
   [guifanPinyinDic, guifanZhuyinDic],
 );
 await addFiles([hanyu7PinyinDic, hanyu7ZhuyinDic], "data/mdx-7/mdd");
@@ -122,22 +100,10 @@ await processHanyu7(readTermsFromFile(`data/mdx-7/mdx/现汉7.mdx.txt`), [
   hanyu7ZhuyinDic,
 ]);
 
-mergeCssFiles(
-  ["styles-guifan.css", "styles-guifan-pinyin-diff.css"],
-  "styles-guifan-pinyin.css",
-);
-mergeCssFiles(
-  ["styles-guifan.css", "styles-guifan-zhuyin-diff.css"],
-  "styles-guifan-zhuyin.css",
-);
-mergeCssFiles(
-  ["styles-hanyu7.css", "styles-hanyu7-pinyin-diff.css"],
-  "styles-hanyu7-pinyin.css",
-);
-mergeCssFiles(
-  ["styles-hanyu7.css", "styles-hanyu7-zhuyin-diff.css"],
-  "styles-hanyu7-zhuyin.css",
-);
+mergeCssFiles(["styles-guifan.css", "styles-guifan-pinyin-diff.css"], "styles-guifan-pinyin.css");
+mergeCssFiles(["styles-guifan.css", "styles-guifan-zhuyin-diff.css"], "styles-guifan-zhuyin.css");
+mergeCssFiles(["styles-hanyu7.css", "styles-hanyu7-pinyin-diff.css"], "styles-hanyu7-pinyin.css");
+mergeCssFiles(["styles-hanyu7.css", "styles-hanyu7-zhuyin-diff.css"], "styles-hanyu7-zhuyin.css");
 
 await Promise.all([
   guifanPinyinDic.addFile("./styles-guifan-pinyin.css", "styles.css"),
