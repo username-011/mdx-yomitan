@@ -1,5 +1,5 @@
 import { type Dictionary } from "yomichan-dict-builder";
-import { addRows, splitVariantForms, type ParsedTerm } from "../shared";
+import { addRows, splitVariantForms, type ParsedTerm } from "../shared.ts";
 import { load, type CheerioAPI } from "cheerio";
 import type { AnyNode } from "domhandler";
 import type { StructuredContentNode } from "yomichan-dict-builder/dist/types/yomitan/termbank";
